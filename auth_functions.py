@@ -16,5 +16,5 @@ def fetch_collection(connection_uri="***REMOVED***",
     client = MongoClient(connection_uri)
     db = client[db_name]
     collection = db[collection_name]
-    return list(collection.find())
+    return list(collection.find({"bitstream": {"$ne": ""}}))
 
