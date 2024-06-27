@@ -6,7 +6,8 @@ Simple Archive format.
 """
 
 import os, csv
-from itemfactory import ItemFactory
+import polars as pl
+from safbuilder.itemfactory import ItemFactory
 from shutil import copy
 import unicodedata
 
@@ -18,21 +19,21 @@ class DspaceArchive:
     The constructor takes a path to a csv file. 
     It then parses the file, creates items, and adds the items to the archive.  
     """
-    def __init__(self, input_path):
+    def __init__(self, file_folder_path, dataframe_object):
         self.items = []
-        self.input_path = input_path.encode('utf-8')
-        self.input_base_path = os.path.dirname(input_path).encode('utf-8')
+        self.input_path = file_folder_path.encode('utf-8')
+        self.input_base_path = os.path.dirname(file_folder_path).encode('utf-8')
 
-        with open(self.input_path, 'r', encoding="utf-8-sig") as f:
-            reader = csv.reader(f)
+        #with open(self.input_path, 'r', encoding="utf-8-sig") as f:
+        reader = csv.reader(dataframe_object.splitlines())
 
-            header = next(reader)
+        header = next(reader)
 
-            item_factory = ItemFactory(header)
+        item_factory = ItemFactory(header)
 
-            for row in reader:
-                item = item_factory.newItem(row)
-                self.addItem(item)
+        for row in reader:
+            item = item_factory.newItem(row)
+            self.addItem(item)
 
     """
     Add an item to the archive. 
@@ -57,7 +58,7 @@ class DspaceArchive:
 
             #item directory
             name = b"item_%03d" % (int(index) + 1)
-            item_path = os.path.join(dir, name)
+            item_path = os.path.join(dir.encode('utf-8'), name)
             self.create_directory(item_path)
 
             #contents file
@@ -102,7 +103,7 @@ class DspaceArchive:
     def copyFiles(self, item, item_path):
         files = item.getFilePaths()
         for index, file_name in enumerate(files):
-            source_path = os.path.join(self.input_base_path, file_name)
+            source_path = os.path.join(self.input_path,  file_name)
             dest_path = os.path.join(item_path, file_name)
             copy(source_path.decode(), self.normalizeUnicode(dest_path).decode())
 

@@ -26,10 +26,13 @@ class Item:
     Set an attribute value.
     """
     def setAttribute(self, attribute, value):
-        if attribute == "files":
+        if attribute == "filename":
             self.files = value.encode('utf-8')
         else:
-            self._attributes[attribute] = value.encode('utf-8')
+            if value is not None:
+                self._attributes[attribute] = value.encode('utf-8')
+            else:
+                self._attributes[attribute] = ""
 
     """
     Get an attribute value. 
