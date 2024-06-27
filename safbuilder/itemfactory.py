@@ -4,7 +4,7 @@ It takes a header on construction and uses that header to
 determine the fields to use for future item creation. 
 """
 
-from item import Item
+from safbuilder.item import Item
 
 class ItemFactory:
 	def __init__(self, header):
