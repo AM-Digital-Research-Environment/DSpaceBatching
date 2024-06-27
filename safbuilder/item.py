@@ -75,7 +75,7 @@ class Item:
     """
     def toXML(self):
         output = b""
-        output += b"<dublin_core>" + os.linesep.encode('utf-8')
+        output += b"""<?xml version="1.0" encoding="UTF-8"?>\n<dublin_core>""" + os.linesep.encode('utf-8')
         for index, value in self.getAttributes().items():
             tag_open = self.getOpenAttributeTag(index)
             tag_close = b"</dcvalue>" + os.linesep.encode('utf-8')

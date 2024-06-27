@@ -84,12 +84,11 @@ class Mapper:
                 ),
 
                 # Physical Description
-                'dc.description': '\n'.join(list(itertools.filterfalse(lambda item: not item, [
+                'dc.description': '||'.join(list(itertools.filterfalse(lambda item: not item, [
                     row.get("physicalDescription").get("type"),
                     try_fetch(query="physicalDescription.method", document=row),
                     try_fetch(query="physicalDescription.desc", document=row, delimiter=", "),
                     try_fetch(query="physicalDescription.tech", document=row, delimiter=", "),
-                    try_fetch(query="physicalDescription.tech", document=row, delimiter="\n")
                 ]))),
 
                 # Keywords
