@@ -15,7 +15,7 @@ from helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
 
 
-class Mapper:
+class batchGenerator:
 
     def __init__(self, db_name, collection_name, files_folder_path=None):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
@@ -102,11 +102,11 @@ class Mapper:
         return self._doc_list
 
     # Staged values or pre-view object
-    def staged(self):
+    def staged_data(self):
         return pl.DataFrame(self.doclistbuilder()).write_csv(file=None)
 
     # Create batches
-    def creatbatch(self):
+    def create_batch_dir(self):
         archive = DspaceArchive(self._files_folder_path, self.staged())
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
 
