@@ -1,0 +1,4 @@
+polars>=0.20.31
+pymongo>=4.6.3
+pandas>=2.2.2
+jmespath>=1.0.1

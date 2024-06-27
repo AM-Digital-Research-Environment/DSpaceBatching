@@ -8,12 +8,11 @@ Created on Wed 26 June 2024
 # Libraries
 
 import polars as pl
-import jmespath
+import os
 import itertools
-from datetime import datetime
 from auth_functions import *
 from helper_functions import *
-#from safbuilder.dspacearchive import DspaceArchive
+from safbuilder.dspacearchive import DspaceArchive
 
 
 class Mapper:
@@ -101,3 +100,13 @@ class Mapper:
             }
             self._doc_list.append(row_dict)
         return self._doc_list
+
+    # Staged values or pre-view object
+    def staged(self):
+        return pl.DataFrame(self.doclistbuilder()).write_csv(file=None)
+
+    # Create batches
+    def creatbatch(self):
+        archive = DspaceArchive(self._files_folder_path, self.staged())
+        archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
+
