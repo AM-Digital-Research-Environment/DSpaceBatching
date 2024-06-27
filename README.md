@@ -30,7 +30,6 @@ Next step (optional), you can check your metadata,
 ~~~~
 
 # To check stage metadata values
-
 bat_gen.staged_data()
 
 ~~~~
@@ -39,7 +38,6 @@ And finally, to generate the SAF batch directory, a folder named 'batches' will 
 ~~~~
 
 # To generate SAF batch directory
-
 bat_gen.create_batch_dir()
 
 ~~~~
