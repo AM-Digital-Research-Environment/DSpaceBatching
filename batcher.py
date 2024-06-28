@@ -10,8 +10,8 @@ Created on Wed 26 June 2024
 import polars as pl
 import os
 import itertools
-from auth_functions import *
-from helper_functions import *
+from auxiliary.auth_functions import *
+from auxiliary.helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
 
 
