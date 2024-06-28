@@ -107,6 +107,6 @@ class batchGenerator:
 
     # Create batches
     def create_batch_dir(self):
-        archive = DspaceArchive(self._files_folder_path, self.staged())
+        archive = DspaceArchive(self._files_folder_path, self.staged_data())
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
 
