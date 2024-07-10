@@ -19,7 +19,7 @@ class DspaceArchive:
     The constructor takes a path to a csv file. 
     It then parses the file, creates items, and adds the items to the archive.  
     """
-    def __init__(self, file_folder_path, metadata_object, relationships_object: dict):
+    def __init__(self, file_folder_path, metadata_object, relationships_object: list):
         self.items = []
         self.relationships = relationships_object
         self.input_path = file_folder_path.encode('utf-8')
@@ -31,9 +31,11 @@ class DspaceArchive:
 
         item_factory = ItemFactory(header)
 
+        # Iterating through items
         for row in reader:
             item = item_factory.newItem(row)
             self.addItem(item)
+
 
     """
     Add an item to the archive. 
@@ -71,7 +73,7 @@ class DspaceArchive:
             self.writeMetadata(item, item_path)
 
             #Relationship File
-            #self.writeRelationships()
+            #self.writeRelationships(self.relationships[index], item_path)
 
     """
     Create a zip file of the archive. 
