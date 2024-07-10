@@ -19,14 +19,14 @@ class DspaceArchive:
     The constructor takes a path to a csv file. 
     It then parses the file, creates items, and adds the items to the archive.  
     """
-    def __init__(self, file_folder_path, dataframe_object):
+    def __init__(self, file_folder_path, metadata_object, relationships_object: dict):
         self.items = []
+        self.relationships = relationships_object
         self.input_path = file_folder_path.encode('utf-8')
         self.input_base_path = os.path.dirname(file_folder_path).encode('utf-8')
 
-        #with open(self.input_path, 'r', encoding="utf-8-sig") as f:
-        reader = csv.reader(dataframe_object.splitlines())
-
+        # Reading csv metadata object passed to class
+        reader = csv.reader(metadata_object.splitlines())
         header = next(reader)
 
         item_factory = ItemFactory(header)
@@ -69,6 +69,9 @@ class DspaceArchive:
 
             #Metadata file
             self.writeMetadata(item, item_path)
+
+            #Relationship File
+            #self.writeRelationships()
 
     """
     Create a zip file of the archive. 
@@ -113,6 +116,23 @@ class DspaceArchive:
         metadata_file = open(os.path.join(item_path, b'dublin_core.xml'), "wb")
         metadata_file.write(xml)
         metadata_file.close()
+
+    """
+    Write relation ship file using relationship object supplied to function
+    """
+    def writeRelationships(self, dict_obj: dict, item_path):
+        #TODO: Setup function to create relationship file
+        """
+        Format for each line:
+        relation.<relation_key> <handle|uuid|folderName:import_item_folder|schema.element[.qualifier]:value>
+
+        :param dict_obj, item_path:
+        :return:  file with no extension
+        """
+        #metadata_file = open(os.path.join(item_path, b'relationships'), "wb")
+        #metadata_file.write(relationships)
+        #metadata_file.close()
+        pass
 
     def normalizeUnicode(self, str):
         """

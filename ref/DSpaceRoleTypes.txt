@@ -1,0 +1,39 @@
+Contact Person
+- Metadata contact
+- Process contact
+
+Supervisor
+- Project director
+- Project supervisor
+- Research supervisor
+- Research team head
+
+Researcher
+- Researcher
+- Research team member
+- Performer of research
+
+Data Collector
+- Editor of compilation
+- Collector
+
+Data Curator
+- Collection registrar
+- Collector
+- Curator
+
+Professorship contributing as a Research Group
+
+Junior Professorship contributing as a Research Group
+
+Chairs contributing as a Research Group
+
+Didactics contributing as a Research Group
+
+Research Unit contributing as a Research Group
+
+Central Facilitiy contributing as a Research Group
+
+UBT related Organization contributing as a Research Group
+
+Further Organization contributing as a Research Group

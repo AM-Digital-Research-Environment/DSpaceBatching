@@ -33,7 +33,7 @@ def try_fetch(query=None, document=None, value=None, delimiter="||", direct=Fals
             return_value = jmespath.search(query, document)
         if isinstance(return_value, list):
             if len(return_value) > 1:
-                return delimiter.join(return_value)
+                return delimiter.join([x for x in return_value if x is not None])
             elif len(return_value) == 1 and not pd.isna(return_value[0]):
                 return return_value[0]
             else:
@@ -41,9 +41,9 @@ def try_fetch(query=None, document=None, value=None, delimiter="||", direct=Fals
         elif not pd.isna(return_value):
             return return_value
         else:
-            return None
+            pass
     except KeyError:
-        return None
+        pass
 
 # Date Convert
 
