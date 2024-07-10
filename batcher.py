@@ -34,7 +34,7 @@ class batchGenerator:
                 # Creator
                 # TODO: Creator Section (this section must exclude named types)
                 # Data of Issue
-                # TODO: Issue Date (Check what value needs to be passed here)
+                # TODO: Issue Date (Check what value needs to be passed here and in what format)
                 # Resource Type
                 # TODO: General resource type and type dictionary to be setup
                 schemamap('resourceType'): row.get('typeOfResource'),
@@ -77,8 +77,16 @@ class batchGenerator:
     def staged_data(self):
         return pl.DataFrame(self.doclistbuilder()).write_csv(file=None)
 
+    # Staged Related Entities
+    def staged_relations(self):
+        return self.relationshipsBuilder()
+
     # Create batches
     def create_batch_dir(self):
-        archive = DspaceArchive(self._files_folder_path, self.staged_data())
+        archive = DspaceArchive(
+            self._files_folder_path,
+            self.staged_data(),
+            self.relationshipsBuilder()
+        )
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
 
