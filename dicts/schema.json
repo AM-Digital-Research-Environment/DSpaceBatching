@@ -1,0 +1,5 @@
+{
+  "title": "dc.title",
+  "creator": "dc.contributor.author",
+  "dateIssue": "dc.date.issued"
+}

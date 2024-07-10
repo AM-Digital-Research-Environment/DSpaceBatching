@@ -65,6 +65,13 @@ def langmap(value_list):
     else:
         pass
 
+# Schema name/label mapping
+
+
+def schemamap(label):
+    schema_list = json_file("dicts/schema.json")
+    return schema_list.get(label)
+
 
 # Try Function (NameError)
 

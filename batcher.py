@@ -28,7 +28,7 @@ class batchGenerator:
         for row in self._data:
             row_dict = {
                 # Filename
-                'filename': row.get('bitstream'),
+                schemamap('filename'): row.get('bitstream'),
                 # Author or Contributor
                 'dc.contributor.author': try_fetch(query="name[].name[]", document=row),
                 # Main title
