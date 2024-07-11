@@ -28,5 +28,5 @@
   "dateCopyright":"dc.date.copyright",
   "subtitle":"datacite.title.subtitle",
   "transTitle":"datacite.title.translated",
-  "atlTitle":"dc.title.alternative"
+  "altTitle":"dc.title.alternative"
 }
