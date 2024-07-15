@@ -10,6 +10,7 @@ Created on Wed 26 June 2024
 import polars as pl
 import os
 import itertools
+from datetime import datetime
 from auxiliary.auth_functions import *
 from auxiliary.helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
@@ -33,8 +34,10 @@ class batchGenerator:
                 schemamap('title'): try_fetch(query="titleInfo[?title_type == 'main'].title[]",  document=row),
                 # Creator
                 # TODO: Creator Section (this section must exclude named types)
-                # Data of Issue
-                # TODO: Issue Date (Check what value needs to be passed here and in what format)
+                # Data of Issue (format "yyyy-mm-dd")
+                schemamap('dateIssue'): datetime.today().strftime("%Y-%m-%d"),
+                # Date of Creation (end)
+                schemamap('dateCreated'): dateconvert(try_fetch("dateInfo.created.end", document=row)),
                 # Resource Type
                 # TODO: General resource type and type dictionary to be setup
                 schemamap('resourceType'): row.get('typeOfResource'),
@@ -58,8 +61,53 @@ class batchGenerator:
                     try_fetch(query="physicalDescription.desc", document=row, delimiter=", "),
                     try_fetch(query="physicalDescription.tech", document=row, delimiter=", "),
                 ]))),
-                # Creation Dates
             }
+            # Optional Fields
+            """
+            Date of collection not included in this list
+            """
+
+            # Date Fields
+            # Date of Creation (start)
+            checkAppend(
+                row_dict,
+                schemamap('dateCreatedStart'),
+                try_fetch(query="dateInfo.created.start", document=row), isdate=True)
+            # Date of Validity (start & end)
+            # Start
+            checkAppend(
+                row_dict,
+                schemamap('dateValidStart'),
+                try_fetch(query="dateInfo.valid.start", document=row), isdate=True)
+            # End
+            checkAppend(
+                row_dict,
+                schemamap('dateValidEnd'),
+                try_fetch(query="dateInfo.valid.end", document=row), isdate=True)
+            # Date of Copyright (only end)
+            checkAppend(
+                row_dict,
+                schemamap('dateCopyright'),
+                try_fetch(query="dateInfo.copy.end", document=row), isdate=True)
+
+            # Title Types
+            # Subtitle
+            checkAppend(
+                row_dict,
+                schemamap('subtitle'),
+                try_fetch(query="titleInfo[?title_type == 'Sub'].title[]", document=row))
+            # Translated
+            checkAppend(
+                row_dict,
+                schemamap('transTitle'),
+                try_fetch(query="titleInfo[?title_type == 'Translated'].title[]", document=row))
+            # Alternative
+            checkAppend(
+                row_dict,
+                schemamap('altTitle'),
+                try_fetch(query="titleInfo[?title_type == 'Alternative'].title[]", document=row))
+
+
             self._doc_list.append(row_dict)
         return self._doc_list
 

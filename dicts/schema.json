@@ -1,7 +1,7 @@
 {
   "title":"dc.title",
   "author":"dc.contributor.author",
-  "dataIssue":"dc.date.issued",
+  "dateIssue":"dc.date.issued",
   "generalResourceType":"datacite.resourcetype",
   "resourceType":"dc.type",
   "language":"dc.language.iso",
@@ -28,5 +28,6 @@
   "dateCopyright":"dc.date.copyright",
   "subtitle":"datacite.title.subtitle",
   "transTitle":"datacite.title.translated",
-  "altTitle":"dc.title.alternative"
+  "altTitle":"dc.title.alternative",
+  "dreIdentifier": "local.isreferncedby.wisski-ubt-id"
 }
