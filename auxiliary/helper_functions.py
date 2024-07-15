@@ -4,8 +4,11 @@ Created on Wed 26 June 2024
 
 @author: AfricaMultiple (NTViswajith)
 """
+
 # Libraries
 import pandas as pd
+import numpy as np
+from types import NoneType
 import json
 from datetime import datetime
 import jmespath
@@ -50,7 +53,7 @@ def try_fetch(query=None, document=None, value=None, delimiter="||", direct=Fals
 
 def dateconvert(value):
     if value is not None:
-        return datetime.fromisoformat(value).strftime("%d-%m-%Y")
+        return datetime.fromisoformat(value).strftime("%Y-%m-%d")
     else:
         return None
 
@@ -84,3 +87,14 @@ def try_func(value, func):
             return func(value)
     except NameError:
         return value
+
+# Check and Add Function
+
+def checkAppend(object_name, key_name, value, isdate=False):
+    if not pd.isna(value) and not isinstance(value, NoneType):
+        if isdate:
+            object_name[key_name] = dateconvert(value)
+        else:
+            object_name[key_name] = value
+    else:
+        pass
