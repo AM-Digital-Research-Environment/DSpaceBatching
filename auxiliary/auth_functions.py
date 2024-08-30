@@ -9,8 +9,8 @@ from pymongo import MongoClient
 
 # Fetches specified collection's data & returns json objects list
 
-
-def fetch_collection(connection_uri="***REMOVED***",
+# Fill in the MongoDB Client URI
+def fetch_collection(connection_uri="",
                      db_name=None,
                      collection_name=None):
     client = MongoClient(connection_uri)
