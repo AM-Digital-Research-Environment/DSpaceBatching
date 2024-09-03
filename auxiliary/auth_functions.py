@@ -9,7 +9,7 @@ from pymongo import MongoClient
 
 # Fetches specified collection's data & returns json objects list
 
-# Fill in the MongoDB Client URI
+# Fill in the MongoDB Client bot URI
 def fetch_collection(connection_uri="",
                      db_name=None,
                      collection_name=None):
