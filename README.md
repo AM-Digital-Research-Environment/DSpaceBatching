@@ -11,6 +11,10 @@ The batcher.py file can be used to generate the 'Simple Archive Format' file str
 
 *Please make sure to use the run requirements file to make sure all dependencies are installed.* 
 
+### Authentication for the MongoDB Client
+For authentication information (MongoDB Client URI) in the auth_functions.py, please enquire us.
+
+
 ## To run the script please follow the below steps:  
 In this step, we import the required class and instantiate said class. The following information will passed as arguments to the class,
 - Your MongoDB database name
