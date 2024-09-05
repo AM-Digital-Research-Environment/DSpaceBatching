@@ -16,7 +16,7 @@ from auxiliary.helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
 
 
-class batchGenerator:
+class BatchGenerator:
 
     def __init__(self, db_name, collection_name, files_folder_path=None):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
@@ -47,11 +47,10 @@ class batchGenerator:
                 # Subject Keywords
                 schemamap('subjectKeywords'): '||'.join(list(itertools.filterfalse(
                     lambda item: not item, list(set(try_fetch(value=[
-                    try_fetch(query="genre.*[]", document=row),
-                    try_fetch(query="subject", document=row,),
-                    try_fetch(query="tags", document=row,)
-                    ], direct=True).split("||")))
-                ))),
+                        try_fetch(query="genre.*[]", document=row),
+                        try_fetch(query="subject", document=row,),
+                        try_fetch(query="tags", document=row,)
+                    ], direct=True).split("||")))))),
                 # Abstract
                 schemamap('abstract'): try_fetch(query="abstract", document=row),
                 # Technical Information
@@ -107,12 +106,11 @@ class batchGenerator:
                 schemamap('altTitle'),
                 try_fetch(query="titleInfo[?title_type == 'Alternative'].title[]", document=row))
 
-
             self._doc_list.append(row_dict)
         return self._doc_list
 
     #TODO: Relationships Dictionary
-    def relationshipsBuilder(self):
+    def relationshipsbuilder(self):
         # Fields to be added in the relationships dictionary
         ## Licence
         ## Contributors?
@@ -134,7 +132,6 @@ class batchGenerator:
         archive = DspaceArchive(
             self._files_folder_path,
             self.staged_data(),
-            self.relationshipsBuilder()
+            self.relationshipsbuilder()
         )
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
-

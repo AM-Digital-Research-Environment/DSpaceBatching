@@ -19,7 +19,7 @@ In this step, we import the required class and instantiate said class. The follo
 ~~~~
 
 # Importing class
-from batcher import batchGenerator
+from batcher import BatchGenerator
 
 # Instantiating batchGenerator class
 bat_gen = batchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", files_folder_path="<file-path-rawdata-folder>")
