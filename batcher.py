@@ -93,7 +93,7 @@ class batchGenerator:
                 # Keywords
                 'dc.subject': '||'.join(list(itertools.filterfalse(lambda item: not item, list(set(try_fetch(value=[
                     try_fetch(query="genre.*[]", document=row),
-                    try_fetch(query="subject[].authLabel", document=row,),
+                    try_fetch(query="subject[].origLabel", document=row,),
                     try_fetch(query="tags", document=row,)
                 ], direct=True).split("||"))))))
 
