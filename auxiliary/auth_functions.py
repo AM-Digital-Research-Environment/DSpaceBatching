@@ -12,7 +12,7 @@ from pymongo import MongoClient
 
 # Fill in the auth_functions_config.json file for MongoDB Client bot URI
 def fetch_collection(db_name=None, collection_name=None):
-    with open('auth_functions_config.json') as config_file:
+    with open('auxiliary/auth_functions_config.json') as config_file:
         config = json.load(config_file)
     connection_uri = config.get('connection_uri', '')
     client = MongoClient(connection_uri)
