@@ -30,7 +30,7 @@ class batchGenerator:
                 # Filename
                 'filename': row.get('bitstream'),
                 # Author or Contributor
-                'dc.contributor.author': try_fetch(query="name[].name[]", document=row),
+                'dc.contributor.author': try_fetch(query="name[?name.qualifier == 'person'].name.label", document=row),
                 # Main title
                 'dc.title': try_fetch(query="titleInfo[?title_type == 'main'].title[]",  document=row),
                 # Other Titles
