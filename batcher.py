@@ -20,11 +20,12 @@ class batchGenerator:
     def __init__(self, db_name, collection_name, files_folder_path=None):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
         self._files_folder_path = files_folder_path
-        self._doc_list = []
+
 
     # Loop for row values
 
     def doclistbuilder(self):
+        _doc_list = []
         for row in self._data:
             row_dict = {
                 # Filename
@@ -98,8 +99,8 @@ class batchGenerator:
                 ], direct=True).split("||"))))))
 
             }
-            self._doc_list.append(row_dict)
-        return self._doc_list
+            _doc_list.append(row_dict)
+        return _doc_list
 
     # Staged values or pre-view object
     def staged_data(self):
