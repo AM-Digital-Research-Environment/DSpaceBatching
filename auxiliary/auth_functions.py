@@ -14,7 +14,7 @@ from pymongo import MongoClient
 def fetch_collection(db_name=None, collection_name=None):
     with open('auxiliary/auth_functions_config.json') as config_file:
         config = json.load(config_file)
-    connection_uri = config.get('connection_uri', '')
+    connection_uri = config.get('mongo_uri', '')
     client = MongoClient(connection_uri)
     db = client[db_name]
     collection = db[collection_name]
