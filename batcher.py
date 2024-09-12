@@ -106,6 +106,7 @@ class BatchGenerator:
                 schemamap('altTitle'),
                 try_fetch(query="titleInfo[?title_type == 'Alternative'].title[]", document=row))
 
+
             self._doc_list.append(row_dict)
         return self._doc_list
 
@@ -135,3 +136,4 @@ class BatchGenerator:
             self.relationshipsbuilder()
         )
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
+
