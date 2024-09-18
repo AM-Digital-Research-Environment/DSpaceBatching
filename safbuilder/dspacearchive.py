@@ -19,7 +19,11 @@ class DspaceArchive:
     The constructor takes a path to a csv file. 
     It then parses the file, creates items, and adds the items to the archive.  
     """
-    def __init__(self, file_folder_path, metadata_object, relationships_object: list):
+    def __init__(self,
+                 file_folder_path: str,
+                 metadata_object: csv,
+                 relationships_object: list[str],
+                 collection_name: str):
         self.items = []
         self.relationships = relationships_object
         self.input_path = file_folder_path.encode('utf-8')
@@ -134,6 +138,10 @@ class DspaceArchive:
         #metadata_file = open(os.path.join(item_path, b'relationships'), "wb")
         #metadata_file.write(relationships)
         #metadata_file.close()
+        pass
+
+    # Todo: Write file with collection handle
+    def writeCollection(self):
         pass
 
     def normalizeUnicode(self, str):
