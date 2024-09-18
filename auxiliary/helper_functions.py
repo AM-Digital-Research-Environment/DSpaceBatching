@@ -98,3 +98,10 @@ def checkAppend(object_name, key_name, value, isdate=False):
             object_name[key_name] = value
     else:
         pass
+
+def typemap(resource):
+    _type_dict = json_file("dicts/resourceType.json")
+    try:
+        return _type_dict.get(resource)
+    except KeyError:
+        return None
