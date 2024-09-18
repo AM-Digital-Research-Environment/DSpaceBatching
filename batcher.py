@@ -10,7 +10,7 @@ Created on Wed 26 June 2024
 import polars as pl
 import os
 import itertools
-from datetime import datetime
+import jmespath as jp
 from auxiliary.auth_functions import *
 from auxiliary.helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
@@ -18,37 +18,45 @@ from safbuilder.dspacearchive import DspaceArchive
 
 class BatchGenerator:
 
-    def __init__(self, db_name, collection_name, files_folder_path=None):
+    def __init__(self, db_name, collection_name,
+                 files_folder_path=None,
+                 main_project: str = "c382517d-8e02-4932-859b-35b195219119"):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
+        self._project = fetch_collection(db_name='dev', collection_name='projectInfo',
+                                         is_dev=True, query={"Project_ID": collection_name})[0]
+        self._main_project = main_project
+        self._license_data = jp.search(
+            '[].{uuid:uuid, name:name, identifier:metadata."dc.identifier.spdx-id"[].value | [0]}',
+            fetch_collection(
+                db_name="dspace_metadata_ubt", collection_name="licenses", is_dev=True
+            )
+        )
         self._files_folder_path = files_folder_path
-        self._doc_list = []
+        self._relationship_types = json_file("dicts/relationsSchema.json")
 
     # Loop for row values
 
     def doclistbuilder(self):
+        _doc_list = []
         for row in self._data:
             row_dict = {
                 # Filename
                 'filename': row.get('bitstream'),
                 # Main Title
                 schemamap('title'): try_fetch(query="titleInfo[?title_type == 'main'].title[]",  document=row),
-                # Creator
-                # TODO: Creator Section (this section must exclude named types)
                 # Data of Issue (format "yyyy-mm-dd")
                 schemamap('dateIssue'): datetime.today().strftime("%Y-%m-%d"),
                 # Date of Creation (end)
                 schemamap('dateCreated'): dateconvert(try_fetch("dateInfo.created.end", document=row)),
                 # Resource Type
-                # TODO: General resource type and type dictionary to be setup
-                schemamap('resourceType'): row.get('typeOfResource'),
-                #schemamap('generalResourceType'): typemap(row.get('typeOfResource'))
+                schemamap('generalResourceType'): typemap(row.get('typeOfResource')),
                 # Langauge
                 schemamap('language'): try_fetch(value=langmap(row.get('language')), direct=True),
                 # Subject Keywords
                 schemamap('subjectKeywords'): '||'.join(list(itertools.filterfalse(
                     lambda item: not item, list(set(try_fetch(value=[
                         try_fetch(query="genre.*[]", document=row),
-                        try_fetch(query="subject", document=row,),
+                        try_fetch(query="subject[].origLabel", document=row,),
                         try_fetch(query="tags", document=row,)
                     ], direct=True).split("||")))))),
                 # Abstract
@@ -106,19 +114,51 @@ class BatchGenerator:
                 schemamap('altTitle'),
                 try_fetch(query="titleInfo[?title_type == 'Alternative'].title[]", document=row))
 
+            # Contributor List
+            """
+            In the case of the contributor role assigned contributor name must be added as qualifier,hence this 
+            requires in the creation of the custom fields to match the qualifier. All elements will fall under the
+            schema dc.contributor 
+            """
+            # Fetching unique qualifiers
+            for role_type in list(set(jp.search("name[].role", row))):
+                row_dict["dc.contributor.{role_type]"] = try_fetch(
+                    query=f"name[?role == {role_type}].name.label",
+                    document=row
+                )
 
-            self._doc_list.append(row_dict)
-        return self._doc_list
+            _doc_list.append(row_dict)
+        return _doc_list
 
-    #TODO: Relationships Dictionary
+    # ToDo: Relationships Dictionary
     def relationshipsbuilder(self):
-        # Fields to be added in the relationships dictionary
-        ## Licence
-        ## Contributors?
-        ## Main Project and Funding
-        ## Subprojects
-        ## Organisational Assignment
-        pass
+        _relations_doc_list = []
+        for row in self._data:
+            _relations_list = [
+                " ".join([self._relationship_types.get('projectMain'), self._main_project])
+            ]
+            # License
+            if row.get('accessCondition').get('rights'):
+                for l in row.get('accessCondition').get('rights'):
+                    _relations_list.append(
+                        " ".join(
+                            [
+                                self._relationship_types.get('license'),
+                                jp.search(f"[?identifier == '{l}'].uuid | [0]", self._license_data)
+                            ]
+                        ))
+
+            # Sub-Project (i.e., project name)
+            _relations_list.append(
+                " ".join(
+                    [
+                        self._relationship_types.get('projectSub'),
+                        self._project.get('rdspace').get('projectSub').get('uuid')
+                    ]
+                )
+            )
+            _relations_doc_list.append("\n".join(_relations_list))
+        return _relations_doc_list
 
     # Staged values or pre-view object
     def staged_data(self):
@@ -126,14 +166,14 @@ class BatchGenerator:
 
     # Staged Related Entities
     def staged_relations(self):
-        return self.relationshipsBuilder()
+        return self.relationshipsbuilder()
 
     # Create batches
     def create_batch_dir(self):
         archive = DspaceArchive(
-            self._files_folder_path,
-            self.staged_data(),
-            self.relationshipsbuilder()
+            file_folder_path=self._files_folder_path,
+            metadata_object=self.staged_data(),
+            relationships_object=self.relationshipsbuilder(),
+            collection_name=self._project.get('rdspace').get('collection').get('uuid')
         )
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
-
