@@ -1,1 +1,17 @@
-{"Cartographic": "Cartographic Material", "Collection": "Dataset", "Dataset": "Dataset", "Image": "Image", "Moving image": "Moving Image", "Tactile": "Physical Object", "Mixed material": "Physical Object", "Artefact": "Physical Object", "Digital": "Software", "Multimedia": "Software", "Audio": "Sound", "Bibliography": "Text", "Text": "Text", "Manuscript": "Manuscript", "Notated music": "Musical Notation"}
+{
+  "Artefact": "Physical Object",
+  "Audio": "Sound",
+  "Bibliography": "Text",
+  "Cartographic": "Cartographic Material",
+  "Collection": "Dataset",
+  "Dataset": "Dataset",
+  "Digital": "Software",
+  "Image": "Image",
+  "Manuscript": "Manuscript",
+  "Mixed material": "Physical Object",
+  "Moving image": "Moving Image",
+  "Multimedia": "Software",
+  "Notated music": "Musical Notation",
+  "Tactile": "Physical Object",
+  "Text": "Text"
+}
