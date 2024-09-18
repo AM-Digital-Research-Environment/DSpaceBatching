@@ -1,6 +1,6 @@
 {
   "author":"relation.isAuthorOfResearchData",
-  "licence":"relation.isLicenseOfResearchData",
+  "license":"relation.isLicenseOfResearchData",
   "contactPerson":"relation.isContactPersonOfResearchData",
   "supervisor":"relation.isSupervisorOfResearchData",
   "researcher":"relation.isResearcherOfResearchData",
