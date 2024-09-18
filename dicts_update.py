@@ -22,24 +22,28 @@ class Dictionary:
         self._mongo_database = MongoClient(self._auth_dict['mongo_connection_string'])['dspace_metadata_ubt']
         self._params = {
             "license": {
-                "query": "f.entityType=License,equals&page=0&size=1000",
+                "query": "f.entityType=License,equals&page=0&size=10000",
                 "mongo_collection": "licenses"
             },
             "fundingAgency": {
-                "query": "f.entityType=FundingAgency,equals&page=0&size=1000",
+                "query": "f.entityType=FundingAgency,equals&page=0&size=10000",
                 "mongo_collection": "fundingAgencies"
             },
             "university": {
-                "query": "f.entityType=University,equals&page=0&size=1000",
+                "query": "f.entityType=University,equals&page=0&size=10000",
                 "mongo_collection": "universities"
             },
             "faculty": {
-                "query": "f.entityType=Faculty,equals&page=0&size=1000",
+                "query": "f.entityType=Faculty,equals&page=0&size=10000",
                 "mongo_collection": "faculties"
             },
             "department": {
-                "query": "f.entityType=Department,equals&page=0&size=1000",
+                "query": "f.entityType=Department,equals&page=0&size=10000",
                 "mongo_collection": "departments"
+            },
+            "subprojectProject": {
+                "query": "f.entityType=,equals&page=0&size=10000",
+                "mongo_collection": "projects"
             }
         }
         self._dict = list(self._params.keys()) if dict_name == "all" else [dict_name]
