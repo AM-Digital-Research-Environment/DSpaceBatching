@@ -7,7 +7,6 @@ Created on Wed 26 June 2024
 
 # Libraries
 import pandas as pd
-import numpy as np
 from types import NoneType
 import json
 from datetime import datetime
