@@ -113,7 +113,7 @@ class Item:
         match = re.search('_(\\w+)', attribute)
 
         if match != None:
-            return b' language="' + self.escape(match.group(1)) + b'" '
+            return b' language="' + match.group(1).encode('utf-8') + b'" '
         else:
             return b''
 

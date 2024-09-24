@@ -5,19 +5,20 @@ See: http://www.dspace.org/1_6_2Documentation/ch08.html#N15B5D for more informat
 Simple Archive format. 
 """
 
-import os, csv
-import polars as pl
+import os
+import csv
 from safbuilder.itemfactory import ItemFactory
 from shutil import copy
 import unicodedata
+
 
 class DspaceArchive:
 
     """
     Constructor:
 
-    The constructor takes a path to a csv file. 
-    It then parses the file, creates items, and adds the items to the archive.  
+    The constructor takes a path to a csv file.
+    It then parses the file, creates items, and adds the items to the archive.
     """
     def __init__(self,
                  file_folder_path: str,
@@ -28,6 +29,7 @@ class DspaceArchive:
         self.relationships = relationships_object
         self.input_path = file_folder_path.encode('utf-8')
         self.input_base_path = os.path.dirname(file_folder_path).encode('utf-8')
+        self.collection = collection_name
 
         # Reading csv metadata object passed to class
         reader = csv.reader(metadata_object.splitlines())
@@ -39,7 +41,6 @@ class DspaceArchive:
         for row in reader:
             item = item_factory.newItem(row)
             self.addItem(item)
-
 
     """
     Add an item to the archive. 
@@ -62,27 +63,32 @@ class DspaceArchive:
 
         for index, item in enumerate(self.items):
 
-            #item directory
+            # item directory
             name = b"item_%03d" % (int(index) + 1)
             item_path = os.path.join(dir.encode('utf-8'), name)
             self.create_directory(item_path)
 
-            #contents file
+            # contents file
             self.writeContentsFile(item, item_path)
 
-            #content files (aka bitstreams)
+            # content files (aka bitstreams)
             self.copyFiles(item, item_path)
 
-            #Metadata file
+            # Metadata file
             self.writeMetadata(item, item_path)
 
-            #Relationship File
-            #self.writeRelationships(self.relationships[index], item_path)
+            # Collection file
+            self.writeCollection(self.collection, item_path)
+
+            # Relationship File
+            self.writeRelationships(relationships_string=
+                                    self.relationships[int(index)],
+                                    item_path=item_path)
 
     """
     Create a zip file of the archive. 
     """
-    def zip(self, dir = None):
+    def zip(self, dir=None):
         pass
 
     """
@@ -100,7 +106,7 @@ class DspaceArchive:
 
         files = item.getFiles()
         for index, file_name in enumerate(files):
-            contents_file.write(self.normalizeUnicode(file_name))
+            contents_file.write(file_name)
             if index < len(files):
                 contents_file.write(b"\n")
 
@@ -118,33 +124,33 @@ class DspaceArchive:
 
     def writeMetadata(self, item, item_path):
         xml = item.toXML()
-
         metadata_file = open(os.path.join(item_path, b'dublin_core.xml'), "wb")
-        metadata_file.write(xml)
+        metadata_file.write(self.normalizeUnicode(xml))
         metadata_file.close()
 
     """
     Write relation ship file using relationship object supplied to function
     """
-    def writeRelationships(self, dict_obj: dict, item_path):
-        #TODO: Setup function to create relationship file
-        """
-        Format for each line:
-        relation.<relation_key> <handle|uuid|folderName:import_item_folder|schema.element[.qualifier]:value>
-
-        :param dict_obj, item_path:
-        :return:  file with no extension
-        """
-        #metadata_file = open(os.path.join(item_path, b'relationships'), "wb")
-        #metadata_file.write(relationships)
-        #metadata_file.close()
-        pass
+    def writeRelationships(self, relationships_string: str, item_path):
+        try:
+            relationship_file = open(os.path.join(item_path, b'relationships'), "wb")
+            relationship_file.write(relationships_string.encode(encoding="utf-8"))
+        except:
+            print("No relationship file created.")
+        finally:
+            relationship_file.close()
 
     # Todo: Write file with collection handle
-    def writeCollection(self):
-        pass
+    def writeCollection(self, collection_name: str, item_path):
+        try:
+            collection_file = open(os.path.join(item_path, b'collections'), "wb")
+            collection_file.write(collection_name.encode(encoding="utf-8"))
+        except:
+            print("No collection file created.")
+        finally:
+            collection_file.close()
 
-    def normalizeUnicode(self, str):
+    def normalizeUnicode(self, value):
         """
         Normalizes a Unicode string by replacing unicode characters with ascii equivalents.
 
@@ -155,5 +161,5 @@ class DspaceArchive:
             str: The normalized string encoded as UTF-8.
 
         """
-        cleaned = unicodedata.normalize(u'NFD', str.decode()).encode('ascii', 'ignore')
+        cleaned = unicodedata.normalize(u'NFD', value.decode()).encode('ascii', 'ignore')
         return cleaned.decode().encode('utf-8')
