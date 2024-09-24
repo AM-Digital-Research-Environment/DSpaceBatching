@@ -100,8 +100,15 @@ def checkAppend(object_name, key_name, value, isdate=False):
         pass
 
 def typemap(resource):
-    _type_dict = json_file("dicts/resourceType.json")
+    _type_dict = json_file("dicts/resourceTypes.json")
     try:
         return _type_dict.get(resource)
+    except KeyError:
+        return None
+
+def rolemap(resource):
+    _role_dict = json_file("dicts/roles.json")
+    try:
+        return _role_dict.get(resource)
     except KeyError:
         return None
