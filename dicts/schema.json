@@ -1,5 +1,6 @@
 {
-  "title":"dc.title",
+  "retention": "local.retention.type",
+  "title":"dc.title_en",
   "author":"dc.contributor.author",
   "dateIssue":"dc.date.issued",
   "generalResourceType":"datacite.resourcetype",
@@ -14,9 +15,9 @@
   "openAire":"dc.subject.openaire",
   "dfg":"dc.subject.dfg",
   "subject":"dc.subject",
-  "abstract":"dc.description.abstract",
+  "abstract":"dc.description.abstract_en",
   "method":"datacite.description.method",
-  "techInfo":"datacite.description.technicalinformation",
+  "techInfo":"datacite.description.technicalinformation_en",
   "extent":"dc.format.extent",
   "mimeType":"dc.format.mimetype",
   "dateCollected":"dc.date.collected",
@@ -26,8 +27,8 @@
   "dateValidEnd":"dc.date.validend",
   "dateValidStart":"dc.date.validstart",
   "dateCopyright":"dc.date.copyright",
-  "subtitle":"datacite.title.subtitle",
-  "transTitle":"datacite.title.translated",
-  "altTitle":"dc.title.alternative",
-  "dreIdentifier": "local.isreferncedby.wisski-ubt-id"
+  "subtitle":"datacite.title.subtitle_en",
+  "transTitle":"datacite.title.translated_en",
+  "altTitle":"dc.title.alternative_en",
+  "dreIdentifier": "dc.identifier.wisski-ubt"
 }
