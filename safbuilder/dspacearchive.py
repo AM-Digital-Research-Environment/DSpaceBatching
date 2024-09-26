@@ -25,11 +25,13 @@ class DspaceArchive:
                  metadata_object: csv,
                  local_object: csv,
                  datacite_object: csv,
+                 dspace_object: csv,
                  relationships_object: list[str],
                  collection_name: str):
         self.items = []
         self.local_items = []
         self.datacite_items = []
+        self.dspace_items = []
         self.relationships = relationships_object
         self.collection = collection_name
         if file_folder_path:
@@ -40,7 +42,8 @@ class DspaceArchive:
         for obj, arr in [
             [metadata_object, self.items],
             [local_object, self.local_items],
-            [datacite_object, self.datacite_items]
+            [datacite_object, self.datacite_items],
+            [dspace_object, self.dspace_items]
         ]:
             # Reading csv metadata object passed to class
             reader = csv.reader(obj.splitlines())
@@ -95,9 +98,15 @@ class DspaceArchive:
                                item_path=item_path)
 
             # Metadata DataCite File
-            self.writeMetadata(self.local_items[int(index)],
+            self.writeMetadata(self.datacite_items[int(index)],
                                schema='datacite',
                                file_name=b"metadata_datacite.xml",
+                               item_path=item_path)
+
+            # Dspace Metadata File
+            self.writeMetadata(self.dspace_items[int(index)],
+                               schema='dspace',
+                               file_name=b"metadata_dspace.xml",
                                item_path=item_path)
 
             # Collection file
