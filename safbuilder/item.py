@@ -73,9 +73,13 @@ class Item:
     """
     Returns an XML represenatation of the item.
     """
-    def toXML(self):
+    def toXML(self, schema: str | None = None):
         output = b""
-        output += b"""<?xml version="1.0" encoding="UTF-8"?>\n<dublin_core>""" + os.linesep.encode('utf-8')
+        if schema:
+            output += bytes("""<?xml version="1.0" encoding="UTF-8"?>\n<dublin_core schema="{}">""".format(schema),
+                            encoding='utf-8') + os.linesep.encode('utf-8')
+        else:
+            output += b"""<?xml version="1.0" encoding="UTF-8"?>\n<dublin_core>""" + os.linesep.encode('utf-8')
         for index, value in self.getAttributes().items():
             tag_open = self.getOpenAttributeTag(index)
             tag_close = b"</dcvalue>" + os.linesep.encode('utf-8')

@@ -21,32 +21,43 @@ class DspaceArchive:
     It then parses the file, creates items, and adds the items to the archive.
     """
     def __init__(self,
-                 file_folder_path: str,
+                 file_folder_path: str | None,
                  metadata_object: csv,
+                 local_object: csv,
+                 datacite_object: csv,
                  relationships_object: list[str],
                  collection_name: str):
         self.items = []
+        self.local_items = []
+        self.datacite_items = []
         self.relationships = relationships_object
-        self.input_path = file_folder_path.encode('utf-8')
-        self.input_base_path = os.path.dirname(file_folder_path).encode('utf-8')
         self.collection = collection_name
+        if file_folder_path:
+            self.input_path = file_folder_path.encode('utf-8')
+            self.input_base_path = os.path.dirname(file_folder_path).encode('utf-8')
 
-        # Reading csv metadata object passed to class
-        reader = csv.reader(metadata_object.splitlines())
-        header = next(reader)
 
-        item_factory = ItemFactory(header)
+        for obj, arr in [
+            [metadata_object, self.items],
+            [local_object, self.local_items],
+            [datacite_object, self.datacite_items]
+        ]:
+            # Reading csv metadata object passed to class
+            reader = csv.reader(obj.splitlines())
+            header = next(reader)
 
-        # Iterating through items
-        for row in reader:
-            item = item_factory.newItem(row)
-            self.addItem(item)
+            item_factory = ItemFactory(header)
+
+            # Iterating through items
+            for row in reader:
+                item = item_factory.newItem(row)
+                self.addItem(item, arr)
 
     """
     Add an item to the archive. 
     """
-    def addItem(self, item):
-        self.items.append(item)
+    def addItem(self, item, listObj: list):
+        listObj.append(item)
 
     """
     Get an item from the archive.
@@ -74,8 +85,20 @@ class DspaceArchive:
             # content files (aka bitstreams)
             self.copyFiles(item, item_path)
 
-            # Metadata file
+            # Metadata Dublin Core file
             self.writeMetadata(item, item_path)
+
+            # Metadata Local File
+            self.writeMetadata(self.local_items[int(index)],
+                               schema='local',
+                               file_name=b"metadata_local.xml",
+                               item_path=item_path)
+
+            # Metadata DataCite File
+            self.writeMetadata(self.local_items[int(index)],
+                               schema='datacite',
+                               file_name=b"metadata_datacite.xml",
+                               item_path=item_path)
 
             # Collection file
             self.writeCollection(self.collection, item_path)
@@ -122,11 +145,12 @@ class DspaceArchive:
             dest_path = os.path.join(item_path, file_name)
             copy(source_path.decode(), self.normalizeUnicode(dest_path).decode())
 
-    def writeMetadata(self, item, item_path):
-        xml = item.toXML()
-        metadata_file = open(os.path.join(item_path, b'dublin_core.xml'), "wb")
+    def writeMetadata(self, item, item_path, schema=None, file_name: bytes = b'dublin_core.xml'):
+        xml = item.toXML(schema=schema)
+        metadata_file = open(os.path.join(item_path, file_name), "wb")
         metadata_file.write(self.normalizeUnicode(xml))
         metadata_file.close()
+
 
     """
     Write relation ship file using relationship object supplied to function
