@@ -8,9 +8,12 @@ Created on Wed 26 June 2024
 # Libraries
 
 import polars as pl
+import numpy as np
+
 import os
 import itertools
 import jmespath as jp
+
 from auxiliary.auth_functions import *
 from auxiliary.helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
@@ -61,8 +64,6 @@ class BatchGenerator:
                 schemamap('dateCreated'): dateconvert(try_fetch("dateInfo.created.end", document=row)),
                 # Resource Type
                 schemamap('resourceType'): row.get('typeOfResource'),
-                # General Resource Type
-                schemamap('generalResourceType'): typemap(row.get('typeOfResource')),
                 # Langauge
                 schemamap('language'): try_fetch(value=langmap(row.get('language')), direct=True),
                 # Subject Keywords
@@ -84,6 +85,8 @@ class BatchGenerator:
 
             # DataCite Schema Dictionary
             _datacite_dict = {
+                # General Resource Type
+                schemamap('generalResourceType'): typemap(row.get('typeOfResource')),
                 # Technical Information
                 schemamap('techInfo'): '||'.join(list(itertools.filterfalse(lambda item: not item, [
                     row.get("physicalDescription").get("type"),
@@ -222,6 +225,11 @@ class BatchGenerator:
     def datacite_staged_data(self):
         return pl.DataFrame(self.doclistbuilder().get('datacite')).fill_nan(None).write_csv(file=None)
 
+    def dspace_staged_data(self):
+        return pl.DataFrame(
+                list(np.repeat({"dspace.entity.type": "ResearchData"}, len(self._data)))
+            ).fill_nan(None).write_csv(file=None)
+
     # Staged Related Entities
     def staged_relations(self):
         return self.relationshipsbuilder()
@@ -234,6 +242,7 @@ class BatchGenerator:
             local_object=self.local_staged_data(),
             datacite_object=self.datacite_staged_data(),
             relationships_object=self.relationshipsbuilder(),
+            dspace_object=self.dspace_staged_data(),
             collection_name=self._project.get('rdspace').get('collection').get('handle')
         )
         if stage:
