@@ -36,17 +36,23 @@ class BatchGenerator:
 
     # Loop for row values
 
-    def doclistbuilder(self):
-        _doc_list = []
+    def doclistbuilder(self) -> dict[str, list]:
+
+        _dc_doc_list = []
+        _local_doc_list = []
+        _datacite_doc_list = []
+
         for row in self._data:
+
             _access = row.get('accessCondition').get('usage').get('type').strip().lower()
-            row_dict = {
+
+            # Mandatory Fields
+            # Dublin Core Schema Dictionary
+            _dc_dict = {
                 # Filename
                 'filename': row.get('bitstream'),
                 # DRE Identifier
                 schemamap('dreIdentifier'): row.get('dre_id'),
-                # Retention Time
-                schemamap('retention'): "publication" if _access == "public" else "storage - 15 years",
                 # Main Title
                 schemamap('title'): try_fetch(query="titleInfo[?title_type == 'main'].title[]",  document=row),
                 # Data of Issue (format "yyyy-mm-dd")
@@ -68,14 +74,25 @@ class BatchGenerator:
                     ], direct=True).split("||")))))),
                 # Abstract
                 schemamap('abstract'): try_fetch(query="abstract", document=row),
+            }
+
+            # Local Schema Dictionary
+            _local_dict = {
+                # Retention Time
+                schemamap('retention'): "publication" if _access == "public" else "storage - 15 years"
+            }
+
+            # DataCite Schema Dictionary
+            _datacite_dict = {
                 # Technical Information
                 schemamap('techInfo'): '||'.join(list(itertools.filterfalse(lambda item: not item, [
                     row.get("physicalDescription").get("type"),
                     try_fetch(query="physicalDescription.method", document=row),
                     try_fetch(query="physicalDescription.desc", document=row, delimiter=", "),
                     try_fetch(query="physicalDescription.tech", document=row, delimiter=", "),
-                ]))),
+                ])))
             }
+
             # Optional Fields
             """
             Date of collection not included in this list
@@ -84,40 +101,40 @@ class BatchGenerator:
             # Date Fields
             # Date of Creation (start)
             checkAppend(
-                row_dict,
+                _dc_dict,
                 schemamap('dateCreatedStart'),
                 try_fetch(query="dateInfo.created.start", document=row), isdate=True)
             # Date of Validity (start & end)
             # Start
             checkAppend(
-                row_dict,
+                _dc_dict,
                 schemamap('dateValidStart'),
                 try_fetch(query="dateInfo.valid.start", document=row), isdate=True)
             # End
             checkAppend(
-                row_dict,
+                _dc_dict,
                 schemamap('dateValidEnd'),
                 try_fetch(query="dateInfo.valid.end", document=row), isdate=True)
             # Date of Copyright (only end)
             checkAppend(
-                row_dict,
+                _dc_dict,
                 schemamap('dateCopyright'),
                 try_fetch(query="dateInfo.copy.end", document=row), isdate=True)
 
             # Title Types
             # Subtitle
             checkAppend(
-                row_dict,
+                _datacite_dict,
                 schemamap('subtitle'),
                 try_fetch(query="titleInfo[?title_type == 'Sub'].title[]", document=row))
             # Translated
             checkAppend(
-                row_dict,
+                _datacite_dict,
                 schemamap('transTitle'),
                 try_fetch(query="titleInfo[?title_type == 'Translated'].title[]", document=row))
             # Alternative
             checkAppend(
-                row_dict,
+                _datacite_dict,
                 schemamap('altTitle'),
                 try_fetch(query="titleInfo[?title_type == 'Alternative'].title[]", document=row))
 
@@ -130,15 +147,24 @@ class BatchGenerator:
             # Fetching unique qualifiers
             for role_type in list(set(jp.search("name[].role", row))):
                 mapped_role_type = rolemap(role_type)
-                row_dict[f"dc.contributor.{mapped_role_type}"] = try_fetch(
+                _dc_dict[f"dc.contributor.{mapped_role_type}"] = try_fetch(
                     query=f"name[?role == '{role_type}'].name.label",
                     document=row
                 )
 
-            _doc_list.append(row_dict)
-        return _doc_list
+            _dc_doc_list.append(_dc_dict)
+            _local_doc_list.append(_local_dict)
+            _datacite_doc_list.append(_datacite_dict)
 
-    # ToDo: Relationships Dictionary
+        if ((len(_dc_doc_list) + len(_local_doc_list) + len(_datacite_doc_list)) % 3) != 0:
+            print("Metadata indices do not match ")
+        else:
+            return {
+                "dc": _dc_doc_list,
+                "local": _local_doc_list,
+                "datacite": _datacite_doc_list
+            }
+
     def relationshipsbuilder(self):
         _relations_doc_list = []
         for row in self._data:
@@ -187,8 +213,14 @@ class BatchGenerator:
         return _relations_doc_list
 
     # Staged values or pre-view object
-    def staged_data(self):
-        return pl.DataFrame(self.doclistbuilder()).fill_nan(None).write_csv(file=None)
+    def dc_staged_data(self):
+        return pl.DataFrame(self.doclistbuilder().get('dc')).fill_nan(None).write_csv(file=None)
+
+    def local_staged_data(self):
+        return pl.DataFrame(self.doclistbuilder().get('local')).fill_nan(None).write_csv(file=None)
+
+    def datacite_staged_data(self):
+        return pl.DataFrame(self.doclistbuilder().get('datacite')).fill_nan(None).write_csv(file=None)
 
     # Staged Related Entities
     def staged_relations(self):
@@ -198,7 +230,9 @@ class BatchGenerator:
     def create_batch_dir(self, stage: bool = False):
         archive = DspaceArchive(
             file_folder_path=self._files_folder_path,
-            metadata_object=self.staged_data(),
+            metadata_object=self.dc_staged_data(),
+            local_object=self.local_staged_data(),
+            datacite_object=self.datacite_staged_data(),
             relationships_object=self.relationshipsbuilder(),
             collection_name=self._project.get('rdspace').get('collection').get('handle')
         )
