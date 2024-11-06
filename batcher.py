@@ -54,6 +54,8 @@ class BatchGenerator:
             _dc_dict = {
                 # Filename
                 'filename': row.get('bitstream'),
+                # Access
+                'access': "'Anonymous'" if _access == 'public' else "'Administrator'",
                 # DRE Identifier
                 schemamap('dreIdentifier'): row.get('dre_id'),
                 # Main Title
