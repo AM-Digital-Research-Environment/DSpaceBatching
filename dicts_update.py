@@ -42,7 +42,7 @@ class Dictionary:
                 "mongo_collection": "departments"
             },
             "subprojectProject": {
-                "query": "f.entityType=,equals&page=0&size=10000",
+                "query": "f.entityType=ProjectSub,equals&page=0&size=10000",
                 "mongo_collection": "projects"
             }
         }
