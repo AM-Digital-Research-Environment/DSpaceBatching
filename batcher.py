@@ -25,8 +25,8 @@ class BatchGenerator:
                  files_folder_path=None,
                  main_project: str = "c382517d-8e02-4932-859b-35b195219119"):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
-        self._project = fetch_collection(db_name='dev', collection_name='projectInfo',
-                                         is_dev=True, query={"Project_ID": collection_name})[0]
+        self._project = fetch_collection(db_name='dev', collection_name='projectsData',
+                                         is_dev=True, query={"id": collection_name})[0]
         self._main_project = main_project
         self._license_data = jp.search(
             '[].{uuid:uuid, name:name, identifier:metadata."dc.identifier.spdx-id"[].value | [0]}',
