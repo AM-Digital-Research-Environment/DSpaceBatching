@@ -1,15 +1,28 @@
-# Dspace Batching
-### Repo for DSpace Batch SAF batch creation
+# RDSpace@UBT Batching 
+### Repository for SAF batches generation for EXC-Africa Multiple Research Data 
 
-The batcher.py file can be used to generate the 'Simple Archive Format' file structure required for performing batch uploads to DSpace. The script will produce a file structure as the requirements stage in the DSpace's documentation with [site][1]. This includes the creation of folders dedicated to each research item with a directory name following the pattern *'item_001', 'item_002'*, and so on. Each item directory will hold at least three files, these are:  
-- Bitstream file
+The batcher.py file can be used to generate the 'Simple Archive Format' directory required for performing batch uploads to DSpace. The script will produce a file structure as per the requirements stated in DSpace's [documentation site][1]. This includes the creation of folders dedicated to each research item with a directory name following the pattern *'item_001', 'item_002'*, and so on. Each item directory will hold the following files:  
+- Bitstream file (or data file)
 - Contents file
-- Metadata XML file *(labelled dublin_core.xml)*
+- Metadata XML files
+  - General metadata *(labelled dublin_core)*
+  - Datacite specific metadata *(labelled metadata_datacite)*
+  - DSpace specific metadata *(labelled metadata_dspace)*
+  - And, System specific local metadata *(labelled metadata_local)*
 - Other optional files include (currently the script does not handle these files)
   -    collections
   -    relationships
 
-*Please make sure to use the run requirements file to make sure all dependencies are installed.* 
+NOTICE  
+*Please make sure to run requirements file in the repository to ensure all dependencies are installed. Furthermore, please ensure that the 'dicts/auth.json' is populated with required credentials before executing the script* 
+
+#### Things to bear in mind before you begin and perform the upload:
+- Firstly, ensure that projects have data files for upload.
+- Secondly, ensure that,
+  - access condition values set for each data item in MongoDB.
+  - the appropriate license is the has been set for the data item.
+  - the bitstream name on MongoDB matches the name of the data item in files directory.
+- Finally, when uploading zipped file run 'Validate Only' process to check for the potentials metadata linkage error on RDSpace.  
 
 ## To run the script please follow the below steps:  
 In this step, we import the required class and instantiate said class. The following information will passed as arguments to the class,
@@ -22,7 +35,7 @@ In this step, we import the required class and instantiate said class. The follo
 from batcher import BatchGenerator
 
 # Instantiating batchGenerator class
-bat_gen = batchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", files_folder_path="<file-path-rawdata-folder>")
+bat_gen = BatchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", files_folder_path="<file-path-rawdata-folder>")
 
 ~~~~
 
@@ -30,7 +43,7 @@ Next step (optional), you can check your metadata,
 ~~~~
 
 # To check stage metadata values
-bat_gen.staged_data()
+staged = bat_gen.create_batch_dir(stage=True)
 
 ~~~~
 
