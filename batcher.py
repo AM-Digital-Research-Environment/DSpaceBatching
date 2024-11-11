@@ -187,6 +187,16 @@ class BatchGenerator:
                             ]
                         ))
 
+            # DRE Custom License
+            _relations_list.append(
+                " ".join(
+                    [
+                        self._relationship_types.get('license'),
+                        "592af705-fb30-4ea8-adeb-97c2a8d458f0"
+                    ]
+                )
+            )
+
             # Sub-Project (i.e., project name)
             _relations_list.append(
                 " ".join(
