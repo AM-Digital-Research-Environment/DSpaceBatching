@@ -28,6 +28,11 @@ NOTICE
 In this step, we import the required class and instantiate said class. The following information will passed as arguments to the class,
 - Your MongoDB database name
 - Collection name
+- Retention option - Possible options are:
+  - Data storage for 5 years 
+  - Data storage for 10 years
+  - Data storage for 15 years (recommended)
+  - Data publication (recommended)
 - File path of the folder holding all raw data. *(labelled 'files')*
 ~~~~
 
@@ -35,7 +40,7 @@ In this step, we import the required class and instantiate said class. The follo
 from batcher import BatchGenerator
 
 # Instantiating batchGenerator class
-bat_gen = BatchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", files_folder_path="<file-path-rawdata-folder>")
+bat_gen = BatchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", retension="<retetion option>", files_folder_path="<file-path-rawdata-folder>")
 
 ~~~~
 
