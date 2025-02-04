@@ -21,9 +21,9 @@ from safbuilder.dspacearchive import DspaceArchive
 
 class BatchGenerator:
 
-    def __init__(self, db_name, collection_name,
-                 files_folder_path=None,
-                 main_project: str = "c382517d-8e02-4932-859b-35b195219119"):
+    def __init__(self, db_name: str, collection_name: str, retention: str,
+                 files_folder_path: str = None,
+                 main_project: str = "4bea8644-ae0f-4913-8cc5-544c5948a8c5"):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
         self._project = fetch_collection(db_name='dev', collection_name='projectsData',
                                          is_dev=True, query={"id": collection_name})[0]
@@ -36,6 +36,7 @@ class BatchGenerator:
         )
         self._files_folder_path = files_folder_path
         self._relationship_types = json_file("dicts/relationsSchema.json")
+        self._retention = retention
 
     # Loop for row values
 
@@ -82,7 +83,7 @@ class BatchGenerator:
             # Local Schema Dictionary
             _local_dict = {
                 # Retention Time
-                schemamap('retention'): "publication" if _access == "public" else "storage - 15 years"
+                schemamap('retention'): self._retention
             }
 
             # DataCite Schema Dictionary
