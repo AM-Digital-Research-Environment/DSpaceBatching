@@ -1,49 +1,97 @@
-# Dspace Batching
-### Repo for DSpace Batch SAF batch creation
+# DSpace Batching (EN)
+### Repository for DSpace SAF Batch Creation
 
-The batcher.py file can be used to generate the 'Simple Archive Format' file structure required for performing batch uploads to DSpace. The script will produce a file structure as the requirements stage in the DSpace's documentation with [site][1]. This includes the creation of folders dedicated to each research item with a directory name following the pattern *'item_001', 'item_002'*, and so on. Each item directory will hold at least three files, these are:  
-- Bitstream file
-- Contents file
-- Metadata XML file *(labelled dublin_core.xml)*
-- Other optional files include (currently the script does not handle these files)
-  -    collections
-  -    relationships
+The `batcher.py` file can be used to generate the *Simple Archive Format* (SAF) file structure required for performing batch uploads to DSpace. The script produces a file structure as specified in the DSpace documentation ([see here][1]). This includes the creation of folders for each research item, with directory names following the pattern *'item_001', 'item_002'*, and so on. Each item directory will contain at least three files:
 
-*Please make sure to use the run requirements file to make sure all dependencies are installed.* 
+- Bitstream file  
+- Contents file  
+- Metadata XML file *(named `dublin_core.xml`)*  
+- Other optional files (currently not handled by the script):  
+  - `collections`  
+  - `relationships`  
+
+**Please ensure you use the `requirements.txt` file to install all necessary dependencies.**
 
 ### Authentication for the MongoDB Client
-For authentication information (MongoDB Client bot URI) in the auth_functions.py, please fill in the auth_functions_config.json file or enquire us.
 
+For authentication (MongoDB Client bot URI) in `auth_functions.py`, please fill in the `auth_functions_config.json` file or contact us for assistance.
 
-## To run the script please follow the below steps:  
-In this step, we import the required class and instantiate said class. The following information will passed as arguments to the class,
-- Your MongoDB database name
-- Collection name
-- File path of the folder holding all raw data. *(labelled 'files')*
-~~~~
+---
 
-# Importing class
+## To run the script, follow these steps:
+
+First, import the required class and instantiate it. Provide the following arguments:
+
+- Your MongoDB database name  
+- Collection name  
+- File path to the folder containing all raw data *(named `files`)*
+
+```python
+# Importing the class
 from batcher import batchGenerator
 
-# Instantiating batchGenerator class
-bat_gen = batchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", files_folder_path="<file-path-rawdata-folder>")
+# Instantiating the batchGenerator class
+bat_gen = batchGenerator(
+    db_name="<mongodb-database-name>",
+    collection_name="<mongodb-collection-name>",
+    files_folder_path="<file-path-to-rawdata-folder>"
+)
 
-~~~~
-
-Next step (optional), you can check your metadata,  
-~~~~
-
-# To check stage metadata values
+# To check staged metadata values (Optional)
 bat_gen.staged_data()
 
-~~~~
-
-And finally, to generate the SAF batch directory, a folder named 'batches' will be generated with items alongside the 'files' folder.
-~~~~
-
-# To generate SAF batch directory
+# To generate the SAF batch directory
 bat_gen.create_batch_dir()
+```
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-~~~~
+# Traitement par lots DSpace (FR)
+### Dépôt pour la création de lots SAF pour DSpace
 
-[1]: https://wiki.lyrasis.org/pages/viewpage.action?pageId=104566653
+Le fichier `batcher.py` peut être utilisé pour générer la structure de fichiers *Simple Archive Format* (SAF) requise pour effectuer des téléversements par lots dans DSpace.  
+Le script produit une structure de fichiers conforme à la documentation de DSpace ([voir ici][1]).
+
+Cela inclut la création de dossiers pour chaque élément de recherche, avec des noms de répertoire suivant le modèle *'item_001', 'item_002'*, etc.  
+Chaque dossier d’élément contiendra au moins trois fichiers :
+
+- Fichier Bitstream  
+- Fichier `contents`  
+- Fichier XML de métadonnées *(nommé `dublin_core.xml`)*  
+- Autres fichiers optionnels (actuellement non pris en charge par le script) :  
+  - `collections`  
+  - `relationships`  
+
+**Veuillez vous assurer d’utiliser le fichier `requirements.txt` pour installer toutes les dépendances nécessaires.**
+
+---
+
+### Authentification pour le client MongoDB
+
+Pour l’authentification (URI du bot client MongoDB) dans `auth_functions.py`, veuillez remplir le fichier `auth_functions_config.json` ou nous contacter pour obtenir de l’aide.
+
+---
+
+## Pour exécuter le script, suivez ces étapes :
+
+Commencez par importer la classe requise et l’instancier. Fournissez les arguments suivants :
+
+- Nom de votre base de données MongoDB  
+- Nom de la collection  
+- Chemin du dossier contenant toutes les données brutes *(nommé `files`)*
+
+```python
+# Importation de la classe
+from batcher import batchGenerator
+
+# Instanciation de la classe batchGenerator
+bat_gen = batchGenerator(
+    db_name="<nom-base-de-données-mongodb>",
+    collection_name="<nom-collection-mongodb>",
+    files_folder_path="<chemin-vers-dossier-données-brutes>"
+)
+
+# Pour vérifier les valeurs des métadonnées en attente
+bat_gen.staged_data()
+
+# Pour générer le répertoire de lot SAF
+bat_gen.create_batch_dir()
