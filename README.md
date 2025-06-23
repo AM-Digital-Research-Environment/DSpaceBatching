@@ -1,7 +1,7 @@
 # DSpace Batching (EN)
 ### Repository for DSpace SAF Batch Creation
 
-The `batcher.py` file can be used to generate the *Simple Archive Format* (SAF) file structure required for performing batch uploads to DSpace. The script produces a file structure as specified in the DSpace documentation ([see here][1]). This includes the creation of folders for each research item, with directory names following the pattern *'item_001', 'item_002'*, and so on. Each item directory will contain at least three files:
+The `batcher.py` file can be used to generate the *Simple Archive Format* (SAF) file structure required for performing batch uploads to DSpace. The script produces a file structure as specified in the DSpace documentation ([see here](https://wiki.lyrasis.org/display/DSDOC9x/Importing+and+Exporting+Items+via+Simple+Archive+Format)). This includes the creation of folders for each research item, with directory names following the pattern *'item_001', 'item_002'*, and so on. Each item directory will contain at least three files:
 
 - Bitstream file  
 - Contents file  
@@ -49,7 +49,7 @@ bat_gen.create_batch_dir()
 ### Dépôt pour la création de lots SAF pour DSpace
 
 Le fichier `batcher.py` peut être utilisé pour générer la structure de fichiers *Simple Archive Format* (SAF) requise pour effectuer des téléversements par lots dans DSpace.  
-Le script produit une structure de fichiers conforme à la documentation de DSpace ([voir ici][1]).
+Le script produit une structure de fichiers conforme à la documentation de DSpace ([voir ici](https://wiki.lyrasis.org/display/DSDOC9x/Importing+and+Exporting+Items+via+Simple+Archive+Format)).
 
 Cela inclut la création de dossiers pour chaque élément de recherche, avec des noms de répertoire suivant le modèle *'item_001', 'item_002'*, etc.  
 Chaque dossier d’élément contiendra au moins trois fichiers :
@@ -95,3 +95,4 @@ bat_gen.staged_data()
 
 # Pour générer le répertoire de lot SAF
 bat_gen.create_batch_dir()
+```
