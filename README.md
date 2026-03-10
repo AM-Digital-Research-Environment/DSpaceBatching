@@ -28,14 +28,17 @@ First, import the required class and instantiate it. Provide the following argum
 
 ```python
 # Importing the class
-from batcher import batchGenerator
+from batcher import BatchGenerator
 
-# Instantiating the batchGenerator class
-bat_gen = batchGenerator(
+# Instantiating the BatchGenerator class
+bat_gen = BatchGenerator(
     db_name="<mongodb-database-name>",
     collection_name="<mongodb-collection-name>",
     files_folder_path="<file-path-to-rawdata-folder>"
 )
+
+# To check filename match
+bat_gen.check_files_directory()
 
 # To check staged metadata values (Optional)
 bat_gen.staged_data()
@@ -81,16 +84,19 @@ Commencez par importer la classe requise et l’instancier. Fournissez les argum
 
 ```python
 # Importation de la classe
-from batcher import batchGenerator
+from batcher import BatchGenerator
 
-# Instanciation de la classe batchGenerator
-bat_gen = batchGenerator(
-    db_name="<nom-base-de-données-mongodb>",
-    collection_name="<nom-collection-mongodb>",
-    files_folder_path="<chemin-vers-dossier-données-brutes>"
+# Instanciation de la classe BatchGenerator
+bat_gen = BatchGenerator(
+    db_name="<mongodb-database-name>",
+    collection_name="<mongodb-collection-name>",
+    files_folder_path="<file-path-to-rawdata-folder>"
 )
 
-# Pour vérifier les valeurs des métadonnées en attente
+# Pour vérifier la correspondance des noms de fichiers
+bat_gen.check_files_directory()
+
+# Pour vérifier les métadonnées mises en attente (Optionnel)
 bat_gen.staged_data()
 
 # Pour générer le répertoire de lot SAF
