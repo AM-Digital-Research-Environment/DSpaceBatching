@@ -9,13 +9,15 @@ Created on Wed 26 June 2024
 
 import polars as pl
 import os
+import glob
+import jmespath as jp
 import itertools
 from auxiliary.auth_functions import *
 from auxiliary.helper_functions import *
 from safbuilder.dspacearchive import DspaceArchive
 
 
-class batchGenerator:
+class BatchGenerator:
 
     def __init__(self, db_name, collection_name, files_folder_path=None):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
@@ -102,6 +104,26 @@ class batchGenerator:
             _doc_list.append(row_dict)
         return _doc_list
 
+    def check_files_directory(self) -> dict[str, str | list[str]]:
+
+        # List of bitstream names in MongoDB
+        mongo_list = set(jp.search('[?bitstream != \'\'].bitstream', self._data))
+
+        # List of filenames in directory
+        files_in_folder = set([os.path.basename(f) for f in glob.glob(self._files_folder_path + "/*")])
+
+        missing_in_mongo = list(files_in_folder - mongo_list)
+        missing_in_files_folder = list(mongo_list - files_in_folder)
+
+        if not missing_in_mongo and not missing_in_files_folder:
+            return {"message": "Both lists contain the same filenames."}
+
+        return {
+            "message": "Please make sure the file names on MongoDB and your files directory match.",
+            "mongo_missing_list": missing_in_mongo,
+            "folder_missing_list": missing_in_files_folder
+        }
+
     # Staged values or pre-view object
     def staged_data(self):
         return pl.DataFrame(self.doclistbuilder()).write_csv(file=None)
@@ -110,4 +132,3 @@ class batchGenerator:
     def create_batch_dir(self):
         archive = DspaceArchive(self._files_folder_path, self.staged_data())
         archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
-
