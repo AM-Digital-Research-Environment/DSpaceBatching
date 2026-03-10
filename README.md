@@ -40,7 +40,15 @@ In this step, we import the required class and instantiate said class. The follo
 from batcher import BatchGenerator
 
 # Instantiating batchGenerator class
-bat_gen = BatchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", retension="<retetion option>", files_folder_path="<file-path-rawdata-folder>")
+bat_gen = BatchGenerator(db_name="<mongodb-database-name>", collection_name="<mongodb-collection-name>", retention="<retention option>", files_folder_path="<file-path-rawdata-folder>")
+
+~~~~
+
+First check to ensure the number of files and filename correspond between in MongoDB and local directory
+~~~~
+
+# To ensure file names match run,
+bat_gen.check_files_directory()
 
 ~~~~
 
