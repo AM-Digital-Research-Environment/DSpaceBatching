@@ -11,6 +11,7 @@ import polars as pl
 import numpy as np
 
 import os
+import glob
 import itertools
 import jmespath as jp
 
@@ -247,8 +248,31 @@ class BatchGenerator:
     def staged_relations(self):
         return self.relationshipsbuilder()
 
+    # Check correspondence of the filenames
+
+    def check_files_directory(self) -> dict[str, str | list[str]]:
+
+        # List of bitstream names in MongoDB
+        mongo_list = set(jp.search('[?bitstream != \'\'].bitstream', self._data))
+
+        # List of filenames in directory
+        files_in_folder = set([os.path.basename(f) for f in glob.glob(self._files_folder_path + "/*")])
+
+        missing_in_mongo = list(files_in_folder - mongo_list)
+        missing_in_files_folder = list(mongo_list - files_in_folder)
+
+        if not missing_in_mongo and not missing_in_files_folder:
+            return {"message": "Both lists contain the same filenames."}
+
+        return {
+            "message": "Please make sure the file names on MongoDB and your files directory match.",
+            "mongo_missing_list": missing_in_mongo,
+            "folder_missing_list": missing_in_files_folder
+        }
+
+
     # Create batches
-    def create_batch_dir(self, stage: bool = False):
+    def create_batch_dir(self, stage: bool = False) -> None | DspaceArchive:
         archive = DspaceArchive(
             file_folder_path=self._files_folder_path,
             metadata_object=self.dc_staged_data(),
@@ -261,4 +285,7 @@ class BatchGenerator:
         if stage:
             return archive
         else:
-            archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
+            archive.write(
+                os.path.join(os.path.dirname(self._files_folder_path),"batches")
+            )
+            return None
