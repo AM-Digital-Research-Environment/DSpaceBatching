@@ -131,11 +131,9 @@ class BatchGenerator:
 
     # Staged values or pre-view object
     def staged_data(self):
-        return pl.DataFrame(self.doclistbuilder()).write_csv(file=None)
+        return pl.DataFrame(self.doclistbuilder())
 
     # Create batches
     def create_batch_dir(self):
-        archive = DspaceArchive(self._files_folder_path, self.staged_data())
-        archive.write(
-            os.path.join(os.path.dirname(self._files_folder_path), "batches")
-        )
+        archive = DspaceArchive(self._files_folder_path, self.staged_data().write_csv(file=None))
+        archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
