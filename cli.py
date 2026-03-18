@@ -127,7 +127,7 @@ def main(database: str,
     batch_gen = BatchGenerator(
         db_name=database,
         collection_name=collection,
-        files_folder_path=str(file_path),
+        files_folder_path=file_path,
     )
 
     check = batch_gen.check_files_directory()
@@ -163,8 +163,8 @@ def main(database: str,
         return 1
 
     if not dry_run:
-        batch_gen.create_batch_dir()
-        richprint("[bold green]SUCCESS: batch has been created.[/bold green]")
+        result = batch_gen.create_batch_dir()
+        richprint(f"[bold green]SUCCESS: batch has been created in {result.resolve()}.[/bold green]")
         return 0
 
     if dump_stage:

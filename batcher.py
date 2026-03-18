@@ -7,21 +7,24 @@ Created on Wed 26 June 2024
 
 # Libraries
 
-import polars as pl
-import os
 import glob
-import jmespath as jp
 import itertools
+import os
+import pathlib
+
+import jmespath as jp
+import polars as pl
+from safbuilder.dspacearchive import DspaceArchive
+
 from auxiliary.auth_functions import *
 from auxiliary.helper_functions import *
-from safbuilder.dspacearchive import DspaceArchive
 
 
 class BatchGenerator:
 
-    def __init__(self, db_name, collection_name, files_folder_path=None):
+    def __init__(self, db_name, collection_name, files_folder_path: pathlib.Path | str | None = None):
         self._data = fetch_collection(db_name=db_name, collection_name=collection_name)
-        self._files_folder_path = files_folder_path
+        self._files_folder_path = pathlib.Path(files_folder_path)
 
 
     # Loop for row values
@@ -110,7 +113,7 @@ class BatchGenerator:
         mongo_list = set(jp.search('[?bitstream != \'\'].bitstream', self._data))
 
         # List of filenames in directory
-        files_in_folder = set([os.path.basename(f) for f in glob.glob(self._files_folder_path + "/*")])
+        files_in_folder = {f.name for f in self._files_folder_path.glob("*")}
 
         missing_in_mongo = list(files_in_folder - mongo_list)
         missing_in_files_folder = list(mongo_list - files_in_folder)
@@ -125,10 +128,12 @@ class BatchGenerator:
         }
 
     # Staged values or pre-view object
-    def staged_data(self):
+    def staged_data(self) -> pl.DataFrame:
         return pl.DataFrame(self.doclistbuilder())
 
     # Create batches
-    def create_batch_dir(self):
-        archive = DspaceArchive(self._files_folder_path, self.staged_data().write_csv(file=None))
-        archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
+    def create_batch_dir(self) -> pathlib.Path:
+        archive = DspaceArchive(str(self._files_folder_path.resolve()), self.staged_data().write_csv(file=None))
+        destination = self._files_folder_path.resolve().parent / "batches"
+        archive.write(str(destination))
+        return destination
