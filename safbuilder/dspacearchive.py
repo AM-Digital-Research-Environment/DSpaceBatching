@@ -90,8 +90,9 @@ class DspaceArchive:
         contents_file = open(os.path.join(item_path, b'contents'), "wb")
 
         files = item.getFiles()
+        access_cond = item.getAccessInfo()
         for index, file_name in enumerate(files):
-            contents_file.write(self.normalizeUnicode(file_name))
+            contents_file.write(self.normalizeUnicode(file_name) + b"\tpermissions:-r " + access_cond[index])
             if index < len(files):
                 contents_file.write(b"\n")
 

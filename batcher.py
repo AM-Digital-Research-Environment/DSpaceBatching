@@ -29,9 +29,14 @@ class BatchGenerator:
     def doclistbuilder(self):
         _doc_list = []
         for row in self._data:
+
+            _access = row.get('accessCondition').get('usage').get('type').strip().lower()
+
             row_dict = {
                 # Filename
                 'filename': row.get('bitstream'),
+                # Access
+                'access': "'Anonymous'" if _access == 'public' else "'Administrator'",
                 # Author or Contributor
                 'dc.contributor.author': try_fetch(query="name[?name.qualifier == 'person'].name.label", document=row),
                 # Main title
@@ -131,4 +136,6 @@ class BatchGenerator:
     # Create batches
     def create_batch_dir(self):
         archive = DspaceArchive(self._files_folder_path, self.staged_data())
-        archive.write(os.path.dirname(self._files_folder_path) + "\\batches")
+        archive.write(
+            os.path.join(os.path.dirname(self._files_folder_path), "batches")
+        )

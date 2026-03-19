@@ -15,6 +15,7 @@ class Item:
         self.delimiter = delimiter
         self._attributes = {}
         self.files = b""
+        self.access = b""
 
     """
     Get a dict of all attributes.
@@ -28,6 +29,8 @@ class Item:
     def setAttribute(self, attribute, value):
         if attribute == "filename":
             self.files = value.encode('utf-8')
+        elif attribute == "access":
+            self.access = value.encode('utf-8')
         else:
             if value is not None:
                 self._attributes[attribute] = value.encode('utf-8')
@@ -56,6 +59,17 @@ class Item:
         for index, file_name in enumerate(files):
             file = os.path.basename(file_name).strip()
             values.append(file)
+        return values
+
+    """
+    Get the access conditions associated with this item.
+    This function just returns the file name, with no path.
+    """
+    def getAccessInfo(self):
+        values = []
+        access = self.access.split(self.delimiter)
+        for index, accessCond in enumerate(access):
+            values.append(accessCond)
         return values
 
     """
